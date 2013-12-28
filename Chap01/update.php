@@ -36,12 +36,18 @@ function main()
 
     // database operations go here
     try {
-        $row = $db->sql_query_row("SELECT * FROM $tn WHERE animal = ?", "duck");
+        $row = $db->sql_query_row("SELECT * FROM $tn WHERE animal = ?", 'dog');
         message('id: %d: The %s says %s', $row['id'], $row['animal'], $row['sound']);
-        message('value result: %s', $db->sql_query_value("SELECT sound FROM $tn WHERE animal = ?", 'dog'));
-        foreach($db->get_recs() as $row){
-            message('id: %d: The %s says %s', $row['id'], $row['animal'], $row['sound']);
-        }
+        $id =  $row['id'];
+        message('updating id %d', $id);
+        $db->sql_do("UPDATE $tn SET sound=? WHERE id = ?", 'bow wow', $id);
+        $row = $db->get_rec($id);
+        message('id: %d: The %s says %s', $row['id'], $row['animal'], $row['sound']);
+        message('updating id %d with CRUD', $id);
+        $db->update($id, array('sound'=>'ruff'));
+        $row = $db->get_rec($id);
+         message('id: %d: The %s says %s', $row['id'], $row['animal'], $row['sound']);
+        
         
         // done -- drop the table
         $db->sql_do("DROP TABLE $tn");
